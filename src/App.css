@@ -1,0 +1,88 @@
+/*
+--dark-moss-green: #606c38ff;
+--pakistan-green: #283618ff;
+--cornsilk: #fefae0ff;
+--earth-yellow: #dda15eff;
+--tigers-eye: #bc6c25ff;
+*/
+:root {
+  --color-primary: #606c38;     /* dark-moss-green: fő szín – általában középtónusú, élénk, jól olvasható */
+ --color-primary-opacity:rgba(96, 108, 56,0.8);
+  --color-secondary: #dda15e;   /* earth-yellow:a fő színt kiegészítő, kontrasztos, de nem harsány */
+  --color-accent: #bc6c25;      /* tigers-eye :gombokra, fontos elemekre, pl. hover, ikon*/
+  --color-bg: #fefae0;          /* cornsilk : nagyon világos, semleges*/
+  --color-text: #283618;        /* pakistan-green : sötét szín a világos háttérhez*/
+}
+*{
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family:  "Poppins", sans-serif;
+}
+
+header {
+  background-color: var(--color-primary-opacity);
+  color: var(--color-bg);
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  width: 90%;
+  text-align: center;
+}
+
+button {
+  background-color: var(--color-accent);
+  color: var(--color-bg);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+button:hover {
+  background-color: var(--color-secondary);
+}
+.app{
+  min-height: 100vh;
+  background-image: url(assets/cover.jpg);
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+}
+.motto{
+
+  color:var(--color-text);
+  margin-bottom: 1.5rem;
+  
+  font-weight: 600;
+}
+.app h1{
+  letter-spacing: 3px;
+}
+/**********/
+.recipes{
+  position: relative;
+  min-height: 100vh;
+}
+.add{
+position: absolute;
+font-size: 0.8rem;
+bottom: 5px;
+right: 5px;
+}
+.goHome{
+  position: absolute;
+  font-size: 0.8rem;
+  top: 5px;
+  left: 5px;
+  color: var(--color-accent);
+  cursor:pointer;
+}
