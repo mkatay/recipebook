@@ -49,7 +49,7 @@ button:hover {
 }
 .app{
   min-height: 100vh;
-  background-image: url(assets/cover.jpg);
+  background-image: url(assets/cover_small.jpg);
   background-size: cover;
   background-position: center;
   display: flex;

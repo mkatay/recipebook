@@ -63,19 +63,28 @@ export const editRecipe = async (id, updatedFields) => {
   await updateDoc(docRef, updatedFields);
 };
 
-// D: Recept törlése (Firestore + Storage)
-export const deleteRecipe = async (id, imageUrl) => {
-  try {
-    // 1️⃣ Törlés Firestore-ból
-    const docRef = doc(db, "recipes", id);
-    await deleteDoc(docRef);
 
-    // 2️⃣ Kép törlése Storage-ból, ha volt
-    if (imageUrl) {
-      const imageRef = ref(storage, imageUrl);
-      await deleteObject(imageRef);
+/***********************************ImgBB******************* */
+export const uploadToImgBB = async (file) => {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      const res = await axios.post(`https://api.imgbb.com/1/upload?key=${apiKey}`,formData);
+      const { url, delete_url } = res.data.data;
+      return { url, delete_url };
+      //return res.data.data.url;
+    } catch (error) {
+      console.error("Kép feltöltési hiba:", error);
+      return null;
     }
-  } catch (err) {
-    console.error("Hiba a recept törlésekor:", err);
+  };
+
+  export const deleteRecipe = async (recipe) => {
+  // 1. Töröljük a képet ImgBB-ről
+  if (recipe.deleteUrl) { //Ez publikus, tehát csak tanulási célra szabad használni, backenden kell a törlést megvalósítani egy valódi projektnél
+    await fetch(recipe.deleteUrl);
   }
+  // 2. Töröljük a receptet Firestore-ból
+  await deleteDoc(doc(db, "recipes", recipe.id));
 };
