@@ -1,4 +1,4 @@
-import { db, storage } from "./firebaseApp";
+import { db } from "./firebaseApp";
 import {
   collection,
   addDoc,
@@ -8,10 +8,12 @@ import {
   query,
   orderBy,
   onSnapshot,
-  serverTimestamp
+  serverTimestamp,
+  getDoc
 } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import imageCompression from "browser-image-compression";
+import axios from "axios";
+const apiKey = import.meta.env.VITE_IMGBB_KEY;
 
 // 🔹 RECIPE CRUD 🔹
 
@@ -24,32 +26,45 @@ export const readRecipes = (setRecipes) => {
   });
   return unsubscribe;
 };
+/***********************************ImgBB******************* */
+export const uploadToImgBB = async (file) => {
+    const formData = new FormData();
+    formData.append("image", file);
+    try {
+      const res = await axios.post(`https://api.imgbb.com/1/upload?key=${apiKey}`,formData);
+      const { url, delete_url } = res.data.data;
+      return { url, delete_url };
+      //return res.data.data.url;
+    } catch (error) {
+       console.error("Kép feltöltési hiba:", error);
+       throw new Error("Kép feltöltése sikertelen.");
+    }
+  };
 
 // C: Új recept hozzáadása képfeltöltéssel
 export const addRecipe = async (recipe, file) => {
   try {
     let imageUrl = "";
-
+    let deleteUrl=""
     if (file) {
-      // 1️⃣ Kép kicsinyítése (max 800px)
+      //Kép kicsinyítése (max 800px)
       const compressed = await imageCompression(file, {
         maxWidthOrHeight: 800,
         useWebWorker: true,
       });
-
-      // 2️⃣ Feltöltés Storage-be
-      const storageRef = ref(storage, `recipes/${Date.now()}_${file.name}`);
-      await uploadBytes(storageRef, compressed);
-
-      // 3️⃣ Letöltési URL
-      imageUrl = await getDownloadURL(storageRef);
+      const uploadResult = await uploadToImgBB(compressed);
+      if (uploadResult) {
+        imageUrl = uploadResult.url;
+        deleteUrl = uploadResult.delete_url;
+        console.log('foto urlek:',imageUrl,deleteUrl);
+        
+      }
     }
-
-    // 4️⃣ Recept mentése Firestore-ba
     const collectionRef = collection(db, "recipes");
     await addDoc(collectionRef, {
       ...recipe,
       imageUrl,
+      deleteUrl,
       timestamp: serverTimestamp(),
     });
   } catch (err) {
@@ -57,34 +72,56 @@ export const addRecipe = async (recipe, file) => {
   }
 };
 
+  export const deleteRecipe = async (id,deleteUrl) => {
+    await axios.get(deleteUrl);
+    await deleteDoc(doc(db, "recipes", id));
+};
+
 // U: Recept módosítása
-export const editRecipe = async (id, updatedFields) => {
-  const docRef = doc(db, "recipes", id);
-  await updateDoc(docRef, updatedFields);
+export const updateRecipe = async (id, updatedData, file) => {
+  try {
+    let imageUrl = updatedData.imageUrl || "";
+    let deleteUrl = updatedData.deleteUrl || "";
+
+    // Ha új képet tölt fel
+    if (file) {
+      const compressed = await imageCompression(file, { maxWidthOrHeight: 800, useWebWorker: true });
+      const { url, delete_url } = await uploadToImgBB(compressed);
+      imageUrl = url;
+      deleteUrl = delete_url;
+    }
+
+    const docRef = doc(db, "recipes", id);
+    await updateDoc(docRef, {
+      ...updatedData,
+      imageUrl,
+      deleteUrl,
+      updatedAt: serverTimestamp(),
+    });
+  } catch (err) {
+    console.error("Hiba a recept frissítésekor:", err);
+  }
 };
 
 
-/***********************************ImgBB******************* */
-export const uploadToImgBB = async (file) => {
-    const formData = new FormData();
-    formData.append("image", file);
 
-    try {
-      const res = await axios.post(`https://api.imgbb.com/1/upload?key=${apiKey}`,formData);
-      const { url, delete_url } = res.data.data;
-      return { url, delete_url };
-      //return res.data.data.url;
-    } catch (error) {
-      console.error("Kép feltöltési hiba:", error);
-      return null;
+// 🔍 Egy recept lekérése ID alapján
+export const readRecipeById = async (id, setRecipe) => {
+  try {
+    const docRef = doc(db, "recipes", id);
+    const snap = await getDoc(docRef);
+    
+    if (snap.exists()) {
+      // 🔹 Hozzáadjuk az id-t is az adatokhoz
+      setRecipe({ id: snap.id, ...snap.data() });
+      console.log(snap.data());
+      
+    } else {
+      console.warn("A keresett recept nem található.");
+      setRecipe(null);
     }
-  };
-
-  export const deleteRecipe = async (recipe) => {
-  // 1. Töröljük a képet ImgBB-ről
-  if (recipe.deleteUrl) { //Ez publikus, tehát csak tanulási célra szabad használni, backenden kell a törlést megvalósítani egy valódi projektnél
-    await fetch(recipe.deleteUrl);
+  } catch (error) {
+    console.error("Hiba a recept lekérésekor:", error);
+    setRecipe(null);
   }
-  // 2. Töröljük a receptet Firestore-ból
-  await deleteDoc(doc(db, "recipes", recipe.id));
 };

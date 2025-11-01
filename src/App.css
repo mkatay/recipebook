@@ -11,7 +11,8 @@
   --color-secondary: #dda15e;   /* earth-yellow:a fő színt kiegészítő, kontrasztos, de nem harsány */
   --color-accent: #bc6c25;      /* tigers-eye :gombokra, fontos elemekre, pl. hover, ikon*/
   --color-bg: #fefae0;          /* cornsilk : nagyon világos, semleges*/
-  --color-text: #283618;        /* pakistan-green : sötét szín a világos háttérhez*/
+  --color-text: #283618; 
+  --color-disabled:#bd916b;       /* pakistan-green : sötét szín a világos háttérhez*/
 }
 *{
   margin: 0;
@@ -47,6 +48,7 @@ button {
 button:hover {
   background-color: var(--color-secondary);
 }
+
 .app{
   min-height: 100vh;
   background-image: url(assets/cover_small.jpg);

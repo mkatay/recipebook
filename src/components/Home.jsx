@@ -7,7 +7,7 @@ export const Home = () => {
     <div className='app'>
       <header>
         <h1>RecipeBook</h1>
-        <button   onClick={()=>navigate('/recipes')} class="motto">Főzz, posztolj, inspirálj !</button>     
+        <button   onClick={()=>navigate('/recipes')} className="motto">Főzz, posztolj, inspirálj !</button>     
       </header>   
     </div>
   )

@@ -1,0 +1,104 @@
+.recipe-card {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 1rem;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.recipe-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.recipe-img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.recipe-content {
+  padding: 1.2rem;
+  color: var(--color-text);
+}
+
+.recipe-content h2 {
+  margin-bottom: 0.5rem;
+  color: var(--color-primary);
+  font-size: 1.4rem;
+}
+
+.recipe-content .category {
+  color: var(--color-accent);
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+}
+
+.recipe-content ul {
+  margin: 0.5rem 0 1rem;
+  padding-left: 1.2rem;
+}
+
+.recipe-content li {
+  list-style-type: disc;
+  margin-bottom: 0.2rem;
+}
+
+.steps {
+  background-color: var(--color-bg);
+  padding: 0.8rem;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.edit-btn,
+.delete-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.edit-btn {
+  background-color: var(--color-secondary);
+  color: var(--color-text);
+}
+
+.delete-btn {
+  background-color: var(--color-accent);
+  color: var(--color-bg);
+}
+
+.edit-btn:hover {
+  background-color: var(--color-primary);
+  color: var(--color-bg);
+}
+
+.delete-btn:hover {
+  background-color: var(--color-secondary);
+  color: var(--color-text);
+}
+
+/* Grid elrendezés a .recipes konténerhez */
+.recipes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+  padding: 2rem;
+}
