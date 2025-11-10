@@ -48,9 +48,12 @@ button {
 button:hover {
   background-color: var(--color-secondary);
 }
-
-.app{
+.container{
+  padding-top: 65px;
   min-height: 100vh;
+}
+.app{
+  min-height: calc(100vh - 65px);
   background-image: url(assets/cover_small.jpg);
   background-size: cover;
   background-position: center;
@@ -70,12 +73,9 @@ button:hover {
   letter-spacing: 3px;
 }
 /**********/
-.recipes{
-  position: relative;
-  min-height: 100vh;
-}
+
 .add{
-position: absolute;
+position: fixed;
 font-size: 0.8rem;
 bottom: 5px;
 right: 5px;
@@ -87,4 +87,21 @@ right: 5px;
   left: 5px;
   color: var(--color-accent);
   cursor:pointer;
+}
+
+.delete-btn,.edit-btn{
+  background-color:var(--color-bg)!important;
+  
+}
+.delete-btn:hover{
+  border:1px solid red;
+}
+.edit-btn:hover{
+  border:1px solid blue;
+}
+/**********/
+.signInUp{
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

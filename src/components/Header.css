@@ -1,0 +1,40 @@
+/* style.css */
+.header {
+    position: fixed;         /* mindig a képernyő tetején marad */
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffebc6;
+  padding: 1rem 2rem;
+    width: 100vw;
+}
+
+
+.header-right {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+button {
+  cursor: pointer;
+}
+.header-right div{
+    display: flex;
+    align-items: center;
+    gap:5px
+}
+.avatar{
+ 
+  color: var(--color-accent);
+  cursor:pointer;
+}
+.header-right div button{
+    font-size: 0.8rem;
+   
+}

@@ -5,17 +5,23 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import { readRecipes } from '../recipeBackend';
 import { Recipe } from './Recipe';
+import { useContext } from 'react';
+import { MyUserContext } from '../context/MyUserContext';
 
 export const Recipes = () => {
+  const {user}=useContext(MyUserContext)
   const [recipes,setRecipes]=useState([])
   useEffect(()=>{
     readRecipes(setRecipes)
   },[])
   const navigate=useNavigate()
+
+  console.log(user);
+  
   return (
     <div className='recipes'>
        {recipes && recipes.length>0 &&  recipes.map(obj=><Recipe key={obj.id} {...obj}/>)}
-       <FaHome size={18} onClick={()=>navigate('/')} className='goHome'/>
+       {recipes && recipes.length==0 && <h4>Nincsenek feltöltött receptek!</h4>}
         <button onClick={()=>navigate('/addnew')} className="add">új recept hozzáadása</button>
     </div>
   )

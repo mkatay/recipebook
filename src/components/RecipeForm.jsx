@@ -60,7 +60,7 @@ useEffect(() => {
     };
      if (id) {
     // 🔄 Szerkesztés
-    await updateRecipe(id,!file ? {...inputData,imageUrl:recipe.imageUrl,deleteUrl:recipe.deleteUrl}: inputData, file);
+    await updateRecipe(id,!file ? {...inputData,imageUrl:recipe.imageUrl,deleteUrl:recipe.deleteUrl}: inputData, file,recipe.deleteUrl);
   } else {
     // 🆕 Új recept
     await addRecipe(inputData, file);
