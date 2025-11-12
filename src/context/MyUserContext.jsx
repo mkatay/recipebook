@@ -2,6 +2,7 @@ import React, { createContext, useEffect, useState } from 'react';
 import { onAuthStateChanged,signInWithEmailAndPassword,signOut,createUserWithEmailAndPassword,deleteUser,sendPasswordResetEmail,updateProfile,
   sendEmailVerification} from 'firebase/auth';
 import { auth } from '../firebaseApp';
+import { useNavigate } from 'react-router';
 
 
 
@@ -13,7 +14,7 @@ export const MyUserContext = createContext();//létrehozunk egy "tartályt" az a
 export const MyUserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [msg,setMsg]=useState({})
-
+  const navigate=useNavigate()
 
   useEffect(() => {
     //Ez a Firebase Auth egyik beépített figyelője (listener).
@@ -27,28 +28,32 @@ export const MyUserProvider = ({ children }) => {
 
   const logoutUser=async ()=>{
     await signOut(auth)    
-    setMsg({});
   }
 
   const signInUser=async (email,password)=>{
     try{
       await signInWithEmailAndPassword(auth,email,password)  
-      setMsg({});
-      setMsg({signin:'Sikeres bejelentkezés!'})
+      const currentUser=auth.currentUser
+      if(!currentUser.emailVerified){
+        setMsg({err: "Az email címedet nem aktiváltad!" });
+        logoutUser()
+        return
+      }
+      setMsg(prev=>delete prev.err)
+      setMsg({signin:true})
+      navigate('/recipes')
      }catch(err){
         setMsg({err:err.message})
        } 
   }
 
   const signUpUser = async (email, password, displayName) => {
-    console.log(email, password, displayName);
-    
   try {
     await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(auth.currentUser, { displayName });
     await sendEmailVerification(auth.currentUser);
-    setMsg({ signup: "Az email címre egy aktiváló link érkezett!" });
-    logoutUser();
+    setMsg(prev=>delete prev.err)
+    setMsg({ signUp: "Az email címre egy aktiváló link érkezett!" });
   } catch (err) {
     setMsg({ err: err.message });
   }
@@ -66,17 +71,22 @@ export const MyUserProvider = ({ children }) => {
     }
   };
      
-  const resetPassword =async (email) => {
-    try{
-      await sendPasswordResetEmail(auth, email);
-      setMsg({});
-      //console.log('A jelszóvisszaállítási email elküldve.');
-      setMsg({resetPw:'A jelszóvisszaállítási email elküldve.'})
-    }catch(err){
-      setMsg({err:err.message})
-
+  const resetPassword = async (email) => {
+  let success = false;
+  try {
+    await sendPasswordResetEmail(auth, email);
+    setMsg({ resetPw: 'A jelszóvisszaállítási email elküldve.' });
+    success = true;
+  } catch (err) {
+    setMsg({ err: err.message });
+  } finally {
+    if (success) {
+      // csak sikeres emailküldés után navigálunk
+      navigate('/signin');
     }
   }
+};
+
   const deleteAccount = async () => {
     try {
       await deleteUser(auth.currentUser);

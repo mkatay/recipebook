@@ -13,7 +13,7 @@ import Header from "./components/Header";
 function App() {
   const { user } = useContext(MyUserContext);
   return (
-    <div className="container">
+    <div className="container ">
       <Header/>
       <Routes>
         <Route path="/" element={<Home />} />

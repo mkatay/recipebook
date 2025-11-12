@@ -19,11 +19,12 @@ const apiKey = import.meta.env.VITE_IMGBB_KEY;
 // 🔹 RECIPE CRUD 🔹
 
 // R: Realtime olvasás
-export const readRecipes = (setRecipes) => {
+export const readRecipes = (setRecipes,setLoading) => {
   const collectionRef = collection(db, "recipes");
   const q = query(collectionRef, orderBy("timestamp", "desc"));
   const unsubscribe = onSnapshot(q, (snapshot) => {
     setRecipes(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    setLoading(false)
   });
   return unsubscribe;
 };

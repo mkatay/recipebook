@@ -2,26 +2,37 @@ import React from "react";
 import { useContext } from "react";
 import { useNavigate } from "react-router";
 import { MyUserContext } from "../context/MyUserContext";
+import { useEffect } from "react";
+import { useState } from "react";
+import { MyToastify } from "./MyToastify";
 
 export const SignUp = () => {
-  const { signUpUser, msg } = useContext(MyUserContext);
+  const { signUpUser, msg,setMsg,logoutUser } = useContext(MyUserContext);
+  const [loading,setLoading]=useState(false)
+console.log(msg,loading);
 
-  console.log(msg);
-  const navigate = useNavigate();
+   useEffect(()=>{
+    setMsg({})
+   },[])
 
-  const handleSubmit = (event) => {
+  const handleSubmit =async (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    //console.log('Sign Up:', data.get('email'), data.get('password'));
-    signUpUser(
-      data.get("email"),
-      data.get("password"),
-      data.get("display_name")
-    );
-    navigate("/recipes");
+    setLoading(true)
+    const myForm=event.currentTarget//el kell tárolni a form-ot mert az onAuthStateChange() lefut ami újrarendereli az oldalt és elveszítjuk az eseményobjektumot
+    try {
+      const data = new FormData(myForm);
+      //console.log('Sign Up:', data.get('email'), data.get('password'));
+      await signUpUser(data.get("email"),data.get("password"), data.get("display_name"));
+      myForm.reset()
+      await logoutUser()
+    } finally {
+        setLoading(false)
+    }
+    
   };
 
   return (
+    <div>
     <div
       style={{
         marginTop: "2rem",
@@ -45,10 +56,12 @@ export const SignUp = () => {
             <label>Username</label>
             <input name="display_name" placeholder="username " type="text" />
           </div>
-          <button>Sign UP</button>
+          <button disabled={loading}>{loading ? "Regisztráció folyamatban..." : "Sign UP"}</button>
         </form>
-        {msg && <div>{msg?.signUp || msg?.err}</div>}
+   
       </div>
+    </div>
+    {msg && <MyToastify {...msg}/>}
     </div>
   );
 };

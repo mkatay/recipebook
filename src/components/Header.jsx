@@ -9,6 +9,7 @@ import { FaHome } from "react-icons/fa";
 const Header = () => {
   const { user, logoutUser } = useContext(MyUserContext);
   const navigate = useNavigate();
+console.log(user);
 
   return (
     <header className="header">
@@ -19,7 +20,7 @@ const Header = () => {
         {user ? (
           <div>
             <RxAvatar size={30} className='avatar' title={user?.displayName}/>
-            <button onClick={logoutUser}>Kijelentkezés</button>
+            <button onClick={()=>logoutUser()}>Kijelentkezés</button>
           </div>
         ) : (
           <div>

@@ -2,22 +2,27 @@ import React from "react";
 import { useContext } from "react";
 import { useNavigate } from "react-router";
 import { MyUserContext } from "../context/MyUserContext";
+import { useEffect } from "react";
+import { MyToastify } from "./MyToastify";
 
 export const SignIn = () => {
-  const { signInUser, msg, user } = useContext(MyUserContext);
-
-  console.log(msg, user);
+  const { signInUser, msg, user,setMsg} = useContext(MyUserContext);
   const navigate = useNavigate();
+console.log(msg);
+
+  useEffect(()=>{
+      setMsg({})
+     },[])
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     //console.log('Sign Up:', data.get('email'), data.get('password'));
     signInUser(data.get("email"), data.get("password"));
-    navigate("/recipes");
-  };
+    };
 
   return (
+    <div>
     <div
       style={{
         marginTop: "2rem",
@@ -41,6 +46,9 @@ export const SignIn = () => {
         </form>
       </div>
       
+    </div>
+    <div style={{textAlign:'center'}}><a href="#" onClick={()=>navigate('/pwreset')}style={{color:'var(--color-accent)'}}>Elfelejtett jelszó</a></div>
+    {msg && <MyToastify {...msg}/>}
     </div>
   );
 };
