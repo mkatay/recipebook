@@ -1,8 +1,11 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { onAuthStateChanged,signInWithEmailAndPassword,signOut,createUserWithEmailAndPassword,deleteUser,sendPasswordResetEmail,updateProfile,
-  sendEmailVerification} from 'firebase/auth';
+  sendEmailVerification,
+  EmailAuthProvider,
+  reauthenticateWithCredential} from 'firebase/auth';
 import { auth } from '../firebaseApp';
 import { useNavigate } from 'react-router';
+import { uploadImage } from '../cloudinaryUtils';
 
 
 
@@ -13,7 +16,7 @@ export const MyUserContext = createContext();//létrehozunk egy "tartályt" az a
 
 export const MyUserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [msg,setMsg]=useState({})
+  const [msg,setMsg]=useState(null)
   const navigate=useNavigate()
 
   useEffect(() => {
@@ -39,7 +42,7 @@ export const MyUserProvider = ({ children }) => {
         logoutUser()
         return
       }
-      setMsg(prev=>delete prev.err)
+      setMsg(null)
       setMsg({signin:true})
       navigate('/recipes')
      }catch(err){
@@ -52,20 +55,22 @@ export const MyUserProvider = ({ children }) => {
     await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(auth.currentUser, { displayName });
     await sendEmailVerification(auth.currentUser);
-    setMsg(prev=>delete prev.err)
+    setMsg(null)
     setMsg({ signUp: "Az email címre egy aktiváló link érkezett!" });
   } catch (err) {
     setMsg({ err: err.message });
   }
 };
 
-  const updateUser =async (displayName,photoURL) => {
+  const updateUser =async (file) => {
     try{
-      if(displayName && photoURL) await updateProfile(auth.currentUser, {displayName,photoURL})
-      else if (displayName) await updateProfile(auth.currentUser, {displayName})
-      else if(photoURL) await updateProfile(auth.currentUser, {photoURL})
-      setMsg({});
-      setMsg({update:'Sikeres módosítás!'})  
+      const uploadresult=await uploadImage(file)
+      console.log(uploadresult);
+      
+      if(uploadresult.url) await updateProfile(auth.currentUser, {photoURL:uploadresult.url})
+      setUser({ ...auth.currentUser }); //  Frissíti a lokális user state-et
+      setMsg(null);
+      setMsg({updateProfile:'Sikeres profil módosítás!'})  
     }catch(err){
         setMsg({err:err.message})
     }
@@ -75,6 +80,7 @@ export const MyUserProvider = ({ children }) => {
   let success = false;
   try {
     await sendPasswordResetEmail(auth, email);
+    setMsg(null)
     setMsg({ resetPw: 'A jelszóvisszaállítási email elküldve.' });
     success = true;
   } catch (err) {
@@ -87,14 +93,27 @@ export const MyUserProvider = ({ children }) => {
   }
 };
 
-  const deleteAccount = async () => {
-    try {
-      await deleteUser(auth.currentUser);
-      console.log('Felhasználói fiók törölve.');
-    } catch (error) {
-      console.error('Hiba történt a fiók törlésekor:', error);
+  const deleteAccount = async (password) => {
+  try {
+    const credential = EmailAuthProvider.credential(auth.currentUser.email,password);
+    // kötelező reauth
+    await reauthenticateWithCredential(auth.currentUser, credential);
+    // ha sikeres → törlés
+    await deleteUser(auth.currentUser);
+    setMsg(null);
+    setMsg({ serverMsg: "Felhasználói fiók törölve." });
+
+  } catch (error) {
+    console.log(error);
+
+    if (error.code === "auth/wrong-password") {
+      setMsg({ err: "Hibás jelszó!" });
+    } else {
+      setMsg({ err: "Hiba történt a fiók törlésekor!" });
     }
-  };
+  }
+};
+
 
     return (
     <MyUserContext.Provider value={{ user,msg,logoutUser,signInUser,resetPassword,setMsg,

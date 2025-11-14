@@ -5,8 +5,11 @@ import { addRecipe, readRecipeById, updateRecipe } from "../recipeBackend";
 import { MdCancel } from "react-icons/md";
 import { useNavigate, useParams } from "react-router";
 import { useEffect } from "react";
+import { useContext } from "react";
+import { MyUserContext } from "../context/MyUserContext";
 
 export const RecipeForm=()=>{
+  const {user}=useContext(MyUserContext)
    const [name, setName] = useState("");
   const [ingredients, setIngredients] = useState([""]);
   const [steps, setSteps] = useState("");
@@ -56,7 +59,9 @@ useEffect(() => {
       name,
       ingredients,
       steps,
-      category
+      category,
+      uid:user.uid,
+      displayName:user.displayName
     };
      if (id) {
     // 🔄 Szerkesztés

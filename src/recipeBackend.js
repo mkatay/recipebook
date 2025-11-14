@@ -12,9 +12,8 @@ import {
   getDoc,
 } from "firebase/firestore";
 import imageCompression from "browser-image-compression";
-import axios from "axios";
 import { deleteImage, uploadImage } from "./cloudinaryUtils";
-const apiKey = import.meta.env.VITE_IMGBB_KEY;
+//const apiKey = import.meta.env.VITE_IMGBB_KEY;
 
 // 🔹 RECIPE CRUD 🔹
 
@@ -64,20 +63,12 @@ export const addRecipe = async (recipe, file) => {
   try {
     let imageUrl = "";
     let deleteUrl = "";
-    if (file) {
-      //Kép kicsinyítése:
-      const compressed = await imageCompression(file, {
-        maxSizeMB: 1,
-        maxWidthOrHeight: 800,
-        useWebWorker: true,
-      });
-      const uploadResult = await uploadImage(compressed)
-      if (uploadResult) {
+    const uploadResult = await uploadImage(file)
+    if (uploadResult) {
         imageUrl = uploadResult.url;
         deleteUrl = uploadResult.public_id;
         console.log("foto urlek:", imageUrl, deleteUrl);
       }
-    }
     const collectionRef = collection(db, "recipes");
     await addDoc(collectionRef, {...recipe,imageUrl, deleteUrl,timestamp: serverTimestamp() });  
   } catch (err) {
@@ -85,15 +76,16 @@ export const addRecipe = async (recipe, file) => {
   }
 };
 //recept törlése:
-export const deleteRecipe = async (id, deleteUrl, setServerMsg) => {
+export const deleteRecipe = async (id, deleteUrl, setMsg) => {
   try {
-    await deleteImage(deleteUrl,setServerMsg)
-    await deleteDoc(doc(db, "recipes", id));
-  
-    
+   const resultFromServer= await deleteImage(deleteUrl)
+   console.log(resultFromServer);
+    console.log(resultFromServer.msg);
+   setMsg({serverMsg:resultFromServer.msg})
+   await deleteDoc(doc(db, "recipes", id));
   } catch (error) {
     console.error("Hiba a törlésnél:", error);
-    setServerMsg("Hiba a törlésnél!");
+    setMsg({msg:"Hiba a törlésnél!"});
   }
 };
 
@@ -103,24 +95,15 @@ export const updateRecipe = async (id, updatedData, file,oldPhotoUrl) => {
   try {
     let imageUrl = updatedData.imageUrl || "";
     let deleteUrl = updatedData.deleteUrl || "";
-
-    // Ha új képet tölt fel
-    if (file) {
-      const compressed = await imageCompression(file, {
-        maxWidthOrHeight: 800,
-        useWebWorker: true,
-      });
       //kitöröljük a régit:
       console.log("Törléshez használt deleteUrl (public_id?):", deleteUrl);
       await deleteImage(oldPhotoUrl)
-      const uploadResult = await uploadImage(compressed)
+      const uploadResult = await uploadImage(file)
       if (uploadResult) {
         imageUrl = uploadResult.url;
         deleteUrl = uploadResult.public_id;
         console.log("foto urlek:", imageUrl, deleteUrl);
       }
-    }
-
     const docRef = doc(db, "recipes", id);
     await updateDoc(docRef, {
       ...updatedData,

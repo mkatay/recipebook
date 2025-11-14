@@ -1,10 +1,8 @@
 import React from "react";
 import { useContext } from "react";
-import { useNavigate } from "react-router";
 import { MyUserContext } from "../context/MyUserContext";
 import { useEffect } from "react";
 import { useState } from "react";
-import { MyToastify } from "./MyToastify";
 
 export const SignUp = () => {
   const { signUpUser, msg,setMsg,logoutUser } = useContext(MyUserContext);
@@ -35,25 +33,25 @@ console.log(msg,loading);
     <div>
     <div
       style={{
-        marginTop: "2rem",
-        width: "100vw",
+        padding: "80px 10px 0 10px",
+        minWidth: "100vw",
         display: "flex",
-        justifyContent: "center",
+        justifyContent: "center"
       }}
     >
       <div>
-        <h3>Sign UP</h3>
-        <form onSubmit={handleSubmit}>
+        <h3 style={{textAlign:"center"}}>Regisztráció</h3>
+        <form onSubmit={handleSubmit} style={{width:"100%"}}>
           <div>
             <label style={{display:'block'}}>Email</label>
             <input name="email" placeholder="email" type="email" />
           </div>
           <div>
-            <label>Password</label>
+            <label style={{display:'block'}}>Password</label>
             <input name="password" placeholder="password " type="password" />
           </div>
           <div>
-            <label>Username</label>
+            <label style={{display:'block'}}>Username</label>
             <input name="display_name" placeholder="username " type="text" />
           </div>
           <button disabled={loading}>{loading ? "Regisztráció folyamatban..." : "Sign UP"}</button>
@@ -61,7 +59,7 @@ console.log(msg,loading);
    
       </div>
     </div>
-    {msg && <MyToastify {...msg}/>}
+
     </div>
   );
 };

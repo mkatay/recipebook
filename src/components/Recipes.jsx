@@ -19,7 +19,7 @@ export const Recipes = () => {
   },[])
   const navigate=useNavigate()
 
-  console.log(user);
+  //console.log(user);
   
   return (
     <div className='recipes'>

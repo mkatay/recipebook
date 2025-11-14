@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router';
 //import { Toastify } from '../components/Toastify';
 import { useEffect } from 'react';
 import { MyUserContext } from '../context/MyUserContext';
-import { MyToastify } from './MyToastify';
 
 export const PwReset = () => {
   const navigate=useNavigate()
@@ -37,8 +36,6 @@ export const PwReset = () => {
       </div>
       
     </div>
-      {/*msg && <div style={{color:'red',textAlign:'center'}}>{msg?.err}</div>*/}
-      {msg && <MyToastify {...msg}/>}
     </div>
 
   )

@@ -1,38 +1,39 @@
-import { useContext } from 'react';
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { toast, ToastContainer } from 'react-toastify';
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from 'react-toastify';
 import { MyUserContext } from '../context/MyUserContext';
 
+export const MyToastify = () => {
+  const { msg, setMsg } = useContext(MyUserContext);
+  const navigate = useNavigate();
 
+  useEffect(() => {
+    if (!msg) return; // ha nincs üzenet, ne csináljon semmit
 
-export const MyToastify=({err,resetPw,signUp})=> {
-  const {setMsg}=useContext(MyUserContext)
-    const navigate=useNavigate()
-console.log(resetPw);
+    if (msg.err) {
+      toast.error(msg.err, { position: "top-left" });
+      setMsg(null);
 
-    useEffect(() => {
-        if (err) {
-          toast.error(err, { position: "top-left" })
-          setMsg({});
-        }else if(resetPw){
-          toast.success(resetPw, { position: "top-center" });
-          // Várakozás a navigáció előtt
-          setTimeout(() => {
-            navigate('/signin')
-            setMsg({});
-          }, 2000);
-        }else if(signUp){
-            toast.success(signUp, { position: "top-center" });
-            setMsg({});
-        }
-       
-      }, [err,resetPw,signUp]); 
-    
-   return (
-      <>
-        <ToastContainer />
-      </>
-    );
-}
+    } else if (msg.resetPw) {
+      toast.success(msg.resetPw, { position: "top-center" });
+      setTimeout(() => {
+        navigate('/signin');
+        setMsg(null);
+      }, 2000);
+
+    } else if (msg.signUp) {
+      toast.success(msg.signUp, { position: "top-center" });
+      setMsg(null);
+
+    } else if (msg.serverMsg) {
+      toast.success(msg.serverMsg, { position: "top-center" });
+      setMsg(null);
+    }else if (msg.updateProfile) {
+      toast.success(msg.updateProfile, { position: "top-center" });
+      setMsg(null);
+    }
+
+  }, [msg, navigate, setMsg]);
+
+  return null;
+};

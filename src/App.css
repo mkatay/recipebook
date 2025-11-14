@@ -49,12 +49,11 @@ button:hover {
   background-color: var(--color-secondary);
 }
 .container{
-  padding-top: 65px;
-  min-height: 100vh;
+   min-height: 100vh;
 }
 .app{
-  min-height: calc(100vh - 65px);
-  background-image: url(assets/cover_small.jpg);
+  min-height: 100vh;
+  background-image: url(assets/bg1.jpg);
   background-size: cover;
   background-position: center;
   display: flex;
@@ -79,14 +78,6 @@ position: fixed;
 font-size: 0.8rem;
 bottom: 5px;
 right: 5px;
-}
-.goHome{
-  position: absolute;
-  font-size: 0.8rem;
-  top: 5px;
-  left: 5px;
-  color: var(--color-accent);
-  cursor:pointer;
 }
 
 .delete-btn,.edit-btn{

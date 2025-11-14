@@ -16,10 +16,17 @@ console.log(user);
     {/*  <h1 onClick={() => navigate("/")}>RecipeBook</h1>*/}
 
       <div className="header-right">
-        <FaHome size={24} onClick={()=>navigate('/')} className='goHome'/>
+        <FaHome size={32} onClick={()=>navigate('/')} className='goHome'/>
         {user ? (
           <div>
-            <RxAvatar size={30} className='avatar' title={user?.displayName}/>
+            <span onClick={()=>navigate('/profile')} title={user?.displayName}>
+              {user?.photoURL ? 
+               <img style={{width: "30px",height:"30px",objectFit:"cover",borderRadius:"50%"}} src={user.photoURL} alt="Profilkép" />
+              :
+               <RxAvatar  size={30} className='avatar' />
+              }
+            </span>
+           
             <button onClick={()=>logoutUser()}>Kijelentkezés</button>
           </div>
         ) : (

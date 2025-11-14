@@ -9,12 +9,17 @@ import { useContext } from "react";
 import { MyUserContext } from "./context/MyUserContext";
 import { SignUp } from "./components/SignUp";
 import Header from "./components/Header";
+import { UserProfile } from "./pages/UserProfile";
+import { MyToastify } from "./components/MyToastify";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   const { user } = useContext(MyUserContext);
   return (
     <div className="container ">
       <Header/>
+       <MyToastify />
+       <ToastContainer />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/recipes" element={<Recipes />} />
@@ -23,6 +28,7 @@ function App() {
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/pwreset" element={<PwReset />} />
+        <Route path="/profile" element={user ? <UserProfile/> : <SignIn />} />
       </Routes>
     </div>
   );

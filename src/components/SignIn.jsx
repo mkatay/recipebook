@@ -3,7 +3,6 @@ import { useContext } from "react";
 import { useNavigate } from "react-router";
 import { MyUserContext } from "../context/MyUserContext";
 import { useEffect } from "react";
-import { MyToastify } from "./MyToastify";
 
 export const SignIn = () => {
   const { signInUser, msg, user,setMsg} = useContext(MyUserContext);
@@ -25,21 +24,21 @@ console.log(msg);
     <div>
     <div
       style={{
-        marginTop: "2rem",
-        width: "100vw",
+        padding: "80px 10px 0 10px",
+        minWidth: "100vw",
         display: "flex",
         justifyContent: "center"
       }}
     >
       <div>
-        <h3>Sign In</h3>
-        <form onSubmit={handleSubmit}>
+        <h3 style={{textAlign:"center"}}>Bejelentkezés</h3>
+        <form onSubmit={handleSubmit} style={{width:"100%"}}>
           <div>
-            <label>Email</label>
+            <label style={{display:"block"}}>Email</label>
             <input name="email" placeholder="email" type="email" />
           </div>
           <div>
-            <label>Password</label>
+            <label  style={{display:"block"}}>Password</label>
             <input name="password" placeholder="password " type="password" />
           </div>
           <button>Sign In</button>
@@ -48,7 +47,7 @@ console.log(msg);
       
     </div>
     <div style={{textAlign:'center'}}><a href="#" onClick={()=>navigate('/pwreset')}style={{color:'var(--color-accent)'}}>Elfelejtett jelszó</a></div>
-    {msg && <MyToastify {...msg}/>}
+ 
     </div>
   );
 };

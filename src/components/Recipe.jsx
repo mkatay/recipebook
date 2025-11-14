@@ -4,12 +4,14 @@ import { MdDelete, MdEdit } from 'react-icons/md'
 import { useNavigate } from 'react-router'
 import { deleteRecipe } from '../recipeBackend'
 import { useState } from 'react'
+import { useContext } from 'react'
+import { MyUserContext } from '../context/MyUserContext'
 
-export const Recipe = ({id, name, ingredients, steps, category, imageUrl,deleteUrl }) => {
-  const [serverMsg,setServerMsg]=useState(null)
+export const Recipe = ({id, name, ingredients, steps, category, imageUrl,deleteUrl,uid,displayName }) => {
+  const {user,setMsg}=useContext(MyUserContext)
   const navigate=useNavigate()
   const handleDelete=()=>{
-    deleteRecipe(id,deleteUrl,setServerMsg)
+    deleteRecipe(id,deleteUrl,setMsg)
   }
 
   const formattedText = steps.split('\n')
@@ -18,7 +20,7 @@ export const Recipe = ({id, name, ingredients, steps, category, imageUrl,deleteU
     <div className="recipe-card">
       <img src={imageUrl} alt={name} className="recipe-img" />
       <div className="recipe-content">
-        <h2>{name}</h2>
+        <h2>{name} <span style={{fontSize:'0.8rem',fontStyle:'italic'}}>({displayName})</span></h2>
         <p className="category">Kategória: {category}</p>
         <div className="recipe-detail">
             <h4>Hozzávalók:</h4>
@@ -34,6 +36,7 @@ export const Recipe = ({id, name, ingredients, steps, category, imageUrl,deleteU
             ))
           }
         </div>
+      {user &&  uid==user.uid && 
         <div className="actions">
           <button className="edit-btn" onClick={()=>navigate('/edit/'+id)} style={{backgroundColor:"var(--color-bg)"}}>
             <MdEdit size={24} style={{color:"blue"}}/>
@@ -42,8 +45,8 @@ export const Recipe = ({id, name, ingredients, steps, category, imageUrl,deleteU
             <MdDelete size={24} style={{color:"red"}}/> 
           </button>
         </div>
-        {serverMsg && <div>{serverMsg?.msg}</div>}
-      </div>
+      }
+     </div>
     </div>
   )
 }
