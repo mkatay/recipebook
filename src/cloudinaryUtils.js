@@ -20,6 +20,8 @@ export const uploadImage = async (file) => {
 
 // törlés
 export const deleteImage = async (public_id) => {
+  console.log(public_id);
+  
   try {
     const resp=await axios.post(`${API_URL}/delete-image`, { public_id });
      console.log("RESP FROM SERVER:", resp.data);  

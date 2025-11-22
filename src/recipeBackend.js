@@ -10,9 +10,11 @@ import {
   onSnapshot,
   serverTimestamp,
   getDoc,
+  setDoc,
 } from "firebase/firestore";
 import imageCompression from "browser-image-compression";
 import { deleteImage, uploadImage } from "./cloudinaryUtils";
+import axios from "axios";
 //const apiKey = import.meta.env.VITE_IMGBB_KEY;
 
 // 🔹 RECIPE CRUD 🔹
@@ -133,5 +135,43 @@ export const readRecipeById = async (id, setRecipe) => {
   } catch (error) {
     console.error("Hiba a recept lekérésekor:", error);
     setRecipe(null);
+  }
+};
+
+
+export const updateAvatar = async (uid, public_id) => {
+  let oldPublicId=null
+  try {
+    const docRef = doc(db, "avatars", uid);
+    const docSnap = await getDoc(docRef);
+    // Ha nincs dokumentum → új készítése
+    if (!docSnap.exists()) {
+      await setDoc(docRef, {uid,public_id});
+    }else{
+      oldPublicId = docSnap.data().public_id;
+      await updateDoc(docRef, {public_id});
+    }
+    if(oldPublicId) await deleteImage(oldPublicId)
+  } catch (error) {
+    console.error("Avatar frissítési hiba:", error);
+    throw error;
+  }
+};
+export const deleteAvatar = async (uid) => {
+  let publicId=null
+  try {
+    const docRef = doc(db, "avatars", uid);
+    const docSnap = await getDoc(docRef);
+    // Ha nincs dokumentum nincs teendő
+    if (!docSnap.exists()) {
+      return
+    }else{
+      publicId = docSnap.data().public_id;
+      await deleteDoc(docRef)
+      await deleteImage(publicId)
+    }
+  } catch (error) {
+    console.error("Avatar törlési hiba:", error);
+    throw error;
   }
 };

@@ -1,5 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { MyUserContext } from '../context/MyUserContext';
+import { deleteAvatar } from '../recipeBackend';
 //import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 //import { storage } from '../firebaseApp';
 
@@ -33,13 +34,14 @@ export const UserProfile = () => {
   const handleDelete = async () => {
     if (window.confirm('Biztosan törölni szeretnéd a fiókodat?')) {
      const pw = prompt("Add meg a jelszavad a fiók törléséhez:");
+     await deleteAvatar(user.uid)
      await deleteAccount(pw);
     };   
   }
 
   return (
     <div  style={{
-        marginTop: "2rem",
+      paddingTop:"5rem",
         width: "100vw",
         display: "flex",
         justifyContent: "center",

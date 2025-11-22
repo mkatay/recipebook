@@ -61,7 +61,7 @@ useEffect(() => {
       steps,
       category,
       uid:user.uid,
-      displayName:user.displayName
+      displayName:user.displayName,
     };
      if (id) {
     // 🔄 Szerkesztés

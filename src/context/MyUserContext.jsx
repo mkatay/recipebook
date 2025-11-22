@@ -6,6 +6,7 @@ import { onAuthStateChanged,signInWithEmailAndPassword,signOut,createUserWithEma
 import { auth } from '../firebaseApp';
 import { useNavigate } from 'react-router';
 import { uploadImage } from '../cloudinaryUtils';
+import { updateAvatar } from '../recipeBackend';
 
 
 
@@ -67,7 +68,11 @@ export const MyUserProvider = ({ children }) => {
       const uploadresult=await uploadImage(file)
       console.log(uploadresult);
       
-      if(uploadresult.url) await updateProfile(auth.currentUser, {photoURL:uploadresult.url})
+      if(uploadresult.url) {
+        await updateProfile(auth.currentUser, {photoURL:uploadresult.url})
+        //el kell tárolni az avatar public_id-t is hogy ki lehessen törölni a Cloudinaryból
+        await updateAvatar(user.uid,uploadresult.public_id)
+      }
       setUser({ ...auth.currentUser }); //  Frissíti a lokális user state-et
       setMsg(null);
       setMsg({updateProfile:'Sikeres profil módosítás!'})  
