@@ -101,7 +101,7 @@ export const MyUserProvider = ({ children }) => {
   const deleteAccount = async (password) => {
   try {
     const credential = EmailAuthProvider.credential(auth.currentUser.email,password);
-    // kötelező reauth
+    // kötelező reauth:újrahitelesíti a jelenlegi felhasználót a megadott jelszóval. 
     await reauthenticateWithCredential(auth.currentUser, credential);
     // ha sikeres → törlés
     await deleteUser(auth.currentUser);

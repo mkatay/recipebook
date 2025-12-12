@@ -2,6 +2,8 @@ import axios from "axios";
 import imageCompression from "browser-image-compression";
 
 const API_URL = "http://localhost:5000/api";
+//const API_URL = import.meta.env.VITE_BACKEND_URL;
+
 
 // feltöltés
 export const uploadImage = async (file) => {
